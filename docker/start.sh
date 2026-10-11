@@ -491,7 +491,7 @@ prepare_video_content() {
     # top-right under the video's LIVE badge, and the watermark is bottom-right.
 
     # Credits / clock / stats (right-aligned, top-right, below the video's own LIVE badge)
-    CHAIN+="${LABELS_OUT}drawtext=fontfile=${FONT}:text='Credits\: NASA':fontcolor=white@0.9:fontsize=22:x=1870-text_w:y=90:${SHADOW}[p9];"
+    CHAIN+="${LABELS_OUT}drawtext=fontfile=${FONT}:text='Credit\: Video designed by Technical Talk India':fontcolor=white@0.9:fontsize=22:x=1870-text_w:y=90:${SHADOW}[p9];"
     CHAIN+="[p9]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/clock.txt:reload=1:fontcolor=${GOLD}:fontsize=21:x=1870-text_w:y=120:${SHADOW}[p10];"
     CHAIN+="[p10]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/subs.txt:reload=1:fontcolor=white@0.85:fontsize=19:x=1870-text_w:y=148:${SHADOW}[p10b];"
     CHAIN+="[p10b]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/viewers.txt:reload=1:fontcolor=white@0.85:fontsize=19:x=1870-text_w:y=174:${SHADOW}[p10c];"
