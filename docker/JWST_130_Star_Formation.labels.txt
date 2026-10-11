@@ -1,0 +1,4 @@
+620,130,Star Formation
+880,270,Protostars
+1080,410,Stellar Nursery
+740,560,Hydrogen Cloud

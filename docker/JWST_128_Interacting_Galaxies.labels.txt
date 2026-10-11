@@ -1,0 +1,4 @@
+620,130,Interacting Galaxies
+900,270,Galaxy Merger
+1080,410,Galactic Core
+740,560,Stellar Streams

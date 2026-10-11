@@ -1,0 +1,4 @@
+470,120,Young Stars
+710,260,Cosmic Filaments
+930,380,Active Galaxy
+1070,540,Stellar Glow

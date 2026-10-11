@@ -1,0 +1,4 @@
+430,120,Stellar Nursery
+700,240,Ancient Light
+920,350,Starburst Region
+1060,510,Galactic Core

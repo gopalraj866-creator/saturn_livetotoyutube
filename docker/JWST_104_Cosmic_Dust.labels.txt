@@ -1,0 +1,4 @@
+620,130,Stellar Streams
+880,270,Galactic Structures
+1080,410,Ancient Stars
+740,560,Cosmic Background

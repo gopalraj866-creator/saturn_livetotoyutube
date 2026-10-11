@@ -1,0 +1,4 @@
+450,160,Cosmic Nebula
+710,280,Stellar Core
+950,400,Galactic Dust
+1090,560,Ancient Light

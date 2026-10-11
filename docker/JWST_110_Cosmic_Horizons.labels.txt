@@ -1,0 +1,4 @@
+560,160,Dark Nebula
+780,330,Galaxy Halo
+1000,460,Star Formation
+680,570,Brilliant Stars

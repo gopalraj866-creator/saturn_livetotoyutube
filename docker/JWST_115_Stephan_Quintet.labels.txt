@@ -1,0 +1,4 @@
+430,120,Deep Field
+700,240,Ancient Galaxy
+920,350,Emission Region
+1060,510,Cosmic Structure

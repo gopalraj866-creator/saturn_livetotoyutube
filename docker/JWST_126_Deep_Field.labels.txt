@@ -1,0 +1,4 @@
+480,110,Distant Galaxies
+680,250,Early Universe
+900,170,Deep Space
+1040,430,Ancient Galaxies

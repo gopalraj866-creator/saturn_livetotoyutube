@@ -1,0 +1,4 @@
+480,110,Galaxy Halo
+680,250,Star Formation
+900,170,Cosmic Dust
+1040,430,Young Stars

@@ -1,0 +1,4 @@
+500,140,Deep Space
+780,220,Star Nursery
+940,410,Supernova Remnant
+1100,300,Cosmic Filament

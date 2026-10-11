@@ -1,0 +1,4 @@
+460,180,Distant Stars
+700,350,Emission Cloud
+880,120,Galaxy Cluster
+1050,530,Stellar Wind

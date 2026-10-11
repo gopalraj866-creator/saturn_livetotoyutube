@@ -1,0 +1,4 @@
+460,300,Star Birth Region
+720,150,Galaxy Core
+900,260,Cosmic Filament
+1050,570,Distant Stars

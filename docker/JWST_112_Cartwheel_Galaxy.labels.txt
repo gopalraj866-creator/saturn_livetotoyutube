@@ -1,0 +1,4 @@
+510,100,Stellar Core
+750,280,Dust Structure
+970,430,Galaxy Cluster
+620,500,Hot Gas

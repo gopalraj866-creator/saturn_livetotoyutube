@@ -1,0 +1,4 @@
+460,130,Cosmic Dust
+680,220,Stellar Cluster
+900,340,Emission Region
+1050,500,Distant Galaxy

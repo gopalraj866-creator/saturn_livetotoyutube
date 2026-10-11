@@ -1,0 +1,4 @@
+540,110,Emission Nebula
+820,250,Galaxy Arm
+650,400,Stellar Wind
+1010,540,Dust Lane

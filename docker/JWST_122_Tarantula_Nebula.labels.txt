@@ -1,0 +1,4 @@
+460,110,Stellar Winds
+700,230,Ancient Galaxy
+940,350,Starbirth Region
+1080,500,Cosmic Halo

@@ -1,0 +1,4 @@
+440,130,Galactic Arms
+680,250,Brilliant Stars
+920,370,Emission Clouds
+1060,530,Distant Light

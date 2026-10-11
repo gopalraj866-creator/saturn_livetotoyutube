@@ -1,0 +1,4 @@
+620,140,Stellar Nursery
+880,260,Star Formation
+1080,390,Cosmic Dust
+750,550,Young Stars

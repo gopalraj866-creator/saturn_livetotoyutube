@@ -1,0 +1,4 @@
+430,150,Deep Universe
+670,270,Star Cluster
+900,390,Dust Clouds
+1050,550,Galaxy Core

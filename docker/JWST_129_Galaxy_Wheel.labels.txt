@@ -1,0 +1,4 @@
+620,140,Spiral Galaxy
+870,270,Galaxy Structure
+1080,400,Stellar Disk
+740,550,Galactic Arms

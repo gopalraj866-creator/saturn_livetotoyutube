@@ -1,0 +1,4 @@
+720,180,Ancient Starlight
+850,120,Blue Giant
+900,330,Gas Filament
+1000,520,Nebula Core

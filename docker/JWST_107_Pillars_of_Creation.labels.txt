@@ -1,0 +1,4 @@
+450,150,Distant Galaxy
+700,300,Hydrogen Cloud
+940,180,Star Cluster
+1080,460,Hot Plasma

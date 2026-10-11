@@ -1,0 +1,4 @@
+450,260,Galaxy Arm
+620,130,Ionized Gas
+850,390,Stellar Core
+1020,560,Dust Region

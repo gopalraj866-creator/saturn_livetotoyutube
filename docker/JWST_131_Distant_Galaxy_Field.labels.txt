@@ -1,0 +1,4 @@
+620,140,Distant Galaxies
+870,270,Galaxy Field
+1080,400,Deep Universe
+740,550,Ancient Light

@@ -1,0 +1,4 @@
+440,110,Star Formation
+720,250,Galactic Halo
+940,370,Interstellar Clouds
+1080,530,Cosmic Structure

@@ -1,0 +1,4 @@
+520,120,Galaxy Core
+760,210,Stellar Nursery
+980,350,Cosmic Dust
+680,520,Young Star

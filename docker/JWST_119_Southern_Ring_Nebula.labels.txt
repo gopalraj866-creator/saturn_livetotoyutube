@@ -1,0 +1,4 @@
+450,140,Ancient Stars
+690,230,Stellar Population
+910,360,Galactic Core
+1040,520,Nebula Region

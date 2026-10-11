@@ -1,0 +1,4 @@
+530,200,Red Giant
+800,110,Nebula Cloud
+990,420,Stellar Remnant
+650,560,Gas Region
