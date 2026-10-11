@@ -70,15 +70,15 @@ SUB_ICON_R=30
 ENABLE_BUMPER=true
 BUMPER_DURATION=5   # seconds
 BUMPER_MESSAGES=(
-    "Stay tuned as we explore Saturn and its magnificent rings."
-    "The ringed giant of the Solar System is coming up next."
-    "Journey around Saturn, the jewel of our Solar System."
-    "From icy ring particles to giant storms, more Saturn awaits."
-    "Saturn's rings are still telling their story. Stay with us."
-    "See Saturn and its moons in extraordinary detail."
-    "Every new observation reveals another secret of Saturn's rings."
-    "Look closer at the ringed planet and its mysterious moons."
-    "Titan, Enceladus and countless icy ring particles are ahead."
+    "Stay tuned as we keep tracking Saturn, its rings and its moons."
+    "Saturn's orbit takes about 29.5 years. Stay with us for the next view."
+    "Follow the ringed planet as it travels along its orbital path."
+    "From Titan to Enceladus, Saturn's moons are coming up next."
+    "The rings of Saturn are still telling their story. Stay with us."
+    "See Saturn and its rings in extraordinary detail."
+    "Every observation reveals another secret of Saturn's rings."
+    "Look closer at the ringed planet and its many moons."
+    "Over 270 moons, countless icy ring particles, and one giant planet."
     "The next chapter of our journey around Saturn begins shortly."
 )
 
@@ -181,9 +181,9 @@ trap 'kill "$CLOCK_PID" 2>/dev/null || true; [ -n "$SUBS_PID" ] && kill "$SUBS_P
 #############################################
 # Static text
 #############################################
-printf 'SATURN AND ITS RINGS'             > "$ASSET_DIR/title1.txt"
-printf "T O D A Y ' S   D I S C O V E R Y" > "$ASSET_DIR/header.txt"
-printf 'SATURN REPORT'                    > "$ASSET_DIR/eyebrow.txt"
+printf 'SATURN AND ITS RINGS — LIVE'     > "$ASSET_DIR/title1.txt"
+printf 'P L A N E T   T R A C K E R'        > "$ASSET_DIR/header.txt"
+printf 'PLANET · RINGS · ORBIT · MOONS'    > "$ASSET_DIR/eyebrow.txt"
 printf 'DID YOU KNOW'                     > "$ASSET_DIR/fact_label.txt"
 
 #############################################
@@ -191,54 +191,57 @@ printf 'DID YOU KNOW'                     > "$ASSET_DIR/fact_label.txt"
 # galaxy_info.txt / facts.txt are missing)
 #############################################
 DEFAULT_HEADLINES=(
-    "Saturn's rings are made of countless pieces of ice, from tiny grains to house-sized chunks."
-    "The main rings stretch about 280,000 kilometers across yet are often only tens of meters thick."
-    "Cassini spent 13 years studying Saturn, its rings and its moons before ending its mission in 2017."
-    "Scientists believe the rings are geologically young, possibly only a few hundred million years old."
-    "Saturn's rings are slowly raining material onto the planet and may disappear in hundreds of millions of years."
-    "Enceladus shoots plumes of water ice from its south pole, feeding Saturn's faint E ring."
-    "Titan, Saturn's largest moon, has a thick atmosphere and lakes of liquid methane and ethane."
-    "A hexagon-shaped jet stream surrounds Saturn's north pole, a pattern unlike any other in the Solar System."
-    "Every few decades Saturn's rings tilt edge-on to Earth and nearly vanish from view."
-    "Gaps in the rings, like the Cassini Division, are carved by the gravity of Saturn's moons."
-    "Shepherd moons such as Prometheus and Pandora help keep Saturn's F ring narrow and sharp."
-    "Saturn's day is only about 10.5 hours long, making the planet bulge noticeably at its equator."
-    "Giant storms called Great White Spots erupt on Saturn roughly once every Saturn year."
-    "Saturn has more than 140 confirmed moons, more than any other planet in our Solar System."
-    "Every observation of Saturn adds another piece to the story of how planets and rings form."
+    "Tracking Saturn live: the planet, its rings, its orbital path and its moons."
+    "Saturn takes about 29.5 Earth years to complete one orbit around the Sun."
+    "Saturn orbits the Sun at an average distance of about 1.4 billion kilometers."
+    "The ring system reaches up to 282,000 kilometers from Saturn, yet the main rings are often only about 10 meters thick."
+    "The rings are labeled with letters, from innermost to outermost: D, C, B, A, F, G and E."
+    "The Cassini Division, a gap about 4,800 kilometers wide, separates Saturn's A and B rings."
+    "Saturn has more than 270 confirmed moons, the most of any planet in the Solar System."
+    "Titan, Saturn's largest moon, is bigger than Mercury and has a thick nitrogen atmosphere."
+    "Enceladus sprays water-ice plumes from its south pole, feeding Saturn's faint E ring."
+    "Saturn's axis is tilted about 27 degrees, which is why its rings seem to open and close over the years."
+    "Saturn rotates once in about 10.5 hours, flattening the planet at its poles."
+    "Saturn is a gas giant made mostly of hydrogen and helium, with no solid surface."
+    "Rhea is Saturn's second-largest moon, followed by Iapetus, Dione and Tethys."
+    "The Cassini spacecraft explored Saturn from 2004 to 2017, ending with a final plunge into the planet."
+    "Saturn reached opposition in early October 2026, when it is closest to Earth and brightest for the year."
 )
 
 DEFAULT_FACTS=(
-    "Saturn is the second largest planet in our Solar System, after Jupiter."
-    "Saturn is a gas giant made mostly of hydrogen and helium."
-    "Saturn's average density is lower than water — it would float in a big enough bathtub."
-    "Saturn is about 9.5 times farther from the Sun than Earth is."
-    "One year on Saturn lasts about 29 Earth years."
+    "Saturn is the second-largest planet in the Solar System, after Jupiter."
+    "Saturn's equatorial diameter is about 120,500 kilometers, roughly 9.4 times Earth's."
+    "Saturn is the least dense planet in the Solar System — less dense than water."
+    "One year on Saturn lasts about 29.5 Earth years."
     "A day on Saturn lasts only about 10.5 hours."
-    "Saturn's rings were first seen by Galileo in 1610, though he could not tell what they were."
-    "Christiaan Huygens correctly described Saturn's rings as a flat disc in 1655."
-    "Saturn's ring system is mostly water ice, with some rock and dust mixed in."
-    "The main rings are named alphabetically in the order they were discovered: D, C, B, A, F, G and E."
-    "The B ring is the brightest and densest of Saturn's main rings."
+    "Saturn's average distance from the Sun is about 9.5 AU, or roughly 1.4 billion kilometers."
+    "Saturn travels around the Sun at an average speed of about 9.7 kilometers per second."
+    "Saturn's axis is tilted about 26.7 degrees, close to Earth's 23.4 degrees."
+    "Saturn's rings are mostly water ice, from tiny grains to chunks as big as houses."
     "The Cassini Division is a gap about 4,800 kilometers wide between the A and B rings."
-    "Saturn's rings reflect a lot of sunlight, which is why they shine so brightly."
-    "Saturn's axis is tilted about 27 degrees, giving the planet seasons that last over seven years."
-    "Saturn's rings seem to disappear from Earth's view about every 13 to 15 years, when seen edge-on."
-    "Saturn has more than 140 confirmed moons."
-    "Titan is larger than the planet Mercury."
-    "Titan is the only moon in our Solar System known to have a thick atmosphere."
-    "Enceladus has a hidden ocean of liquid water beneath its icy crust."
-    "Mimas, with its giant crater, looks a lot like the Death Star."
-    "Iapetus has one bright side and one dark side, a puzzle scientists have studied for centuries."
-    "Saturn's winds can reach about 1,800 kilometers per hour near the equator."
-    "A six-sided jet stream called the hexagon circles Saturn's north pole."
-    "Saturn radiates more heat than it receives from the Sun."
-    "The Cassini spacecraft orbited Saturn from 2004 until 2017."
-    "Cassini's Grand Finale took it between Saturn and its innermost ring before it plunged into the planet."
-    "The Huygens probe landed on Titan in 2005, the farthest landing ever made from Earth."
-    "Saturn is visible to the naked eye as a bright, steady, yellowish point of light."
-    "Even a small telescope can show Saturn's rings."
-    "Pioneer 11, Voyager 1 and Voyager 2 all visited Saturn before Cassini."
+    "The B ring is the brightest and most massive of Saturn's main rings."
+    "The tiny moon Pan keeps the Encke Gap in Saturn's A ring clear."
+    "The shepherd moons Prometheus and Pandora help shape Saturn's narrow F ring."
+    "Saturn has more than 270 confirmed moons, more than any other planet."
+    "Titan is Saturn's largest moon and the second-largest moon in the Solar System."
+    "Titan is the only moon with a thick atmosphere, and it has lakes of liquid methane and ethane."
+    "Enceladus has a global ocean of liquid water beneath its icy crust."
+    "Mimas is marked by the giant Herschel crater, about one third of the moon's width."
+    "Iapetus has one bright hemisphere and one dark hemisphere."
+    "Rhea is Saturn's second-largest moon, about 1,527 kilometers across."
+    "Mimas orbits Saturn in about 22.6 hours, the fastest of the major moons."
+    "Enceladus orbits Saturn in about 1.4 days."
+    "Titan orbits Saturn in about 16 days."
+    "Iapetus takes about 79 days to orbit Saturn."
+    "Saturn's major moons orbit close to the plane of its rings."
+    "A six-sided jet stream circles Saturn's north pole and is about 30,000 kilometers wide."
+    "Winds near Saturn's equator reach about 1,800 kilometers per hour."
+    "Saturn radiates more energy than it receives from the Sun."
+    "The Cassini spacecraft orbited Saturn from 2004 to 2017."
+    "The Huygens probe landed on Titan in January 2005."
+    "Galileo first saw Saturn's rings in 1610, and Christiaan Huygens explained them in 1655."
+    "Seen edge-on from Earth, Saturn's rings nearly vanish about every 13 to 15 years."
+    "Saturn is visible to the naked eye, and even a small telescope shows its rings."
 )
 
 #############################################
@@ -481,19 +484,21 @@ prepare_video_content() {
     build_labels_chain "$url"
     CHAIN+="$LABELS_CHAIN"
 
-    # LIVE badge
-    CHAIN+="${LABELS_OUT}drawbox=x=40:y=42:w=17:h=17:color=${RED}:t=fill:enable='lt(mod(t\,1)\,0.6)'[p7];"
-    CHAIN+="[p7]drawtext=fontfile=${FONT}:text='LIVE':fontcolor=white:fontsize=45:x=66:y=28:${SHADOW}[p8];"
+    # Layout note: the Saturn video already has its own "SATURN / THE RINGED
+    # PLANET" title (top-left, down to y~110), a LIVE badge (top-right, down to
+    # y~65) and a credit line (bottom-left, y~1045). So there is no LIVE badge
+    # here, the info block starts below y=120, the credits/clock/stats sit
+    # top-right under the video's LIVE badge, and the watermark is bottom-right.
 
-    # Credits / clock / stats (plain text, no panel)
-    CHAIN+="[p8]drawtext=fontfile=${FONT}:text='Credits\: NASA':fontcolor=white@0.9:fontsize=22:x=470-text_w:y=28:${SHADOW}[p9];"
-    CHAIN+="[p9]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/clock.txt:reload=1:fontcolor=${GOLD}:fontsize=21:x=470-text_w:y=58:${SHADOW}[p10];"
-    CHAIN+="[p10]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/subs.txt:reload=1:fontcolor=white@0.85:fontsize=19:x=470-text_w:y=86:${SHADOW}[p10b];"
-    CHAIN+="[p10b]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/viewers.txt:reload=1:fontcolor=white@0.85:fontsize=19:x=470-text_w:y=112:${SHADOW}[p10c];"
+    # Credits / clock / stats (right-aligned, top-right, below the video's own LIVE badge)
+    CHAIN+="${LABELS_OUT}drawtext=fontfile=${FONT}:text='Credits\: NASA':fontcolor=white@0.9:fontsize=22:x=1870-text_w:y=90:${SHADOW}[p9];"
+    CHAIN+="[p9]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/clock.txt:reload=1:fontcolor=${GOLD}:fontsize=21:x=1870-text_w:y=120:${SHADOW}[p10];"
+    CHAIN+="[p10]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/subs.txt:reload=1:fontcolor=white@0.85:fontsize=19:x=1870-text_w:y=148:${SHADOW}[p10b];"
+    CHAIN+="[p10b]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/viewers.txt:reload=1:fontcolor=white@0.85:fontsize=19:x=1870-text_w:y=174:${SHADOW}[p10c];"
 
-    # Title
+    # Title (below the video's own title)
     CHAIN+="[p10c]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/title1.txt:fontcolor=white:fontsize=39:x=50:y=150:${SHADOW}[p11];"
-    CHAIN+="[p11]drawbox=x=50:y=210:w=420:h=3:color=${GOLD}@0.8:t=fill[p13];"
+    CHAIN+="[p11]drawbox=x=50:y=210:w=620:h=3:color=${GOLD}@0.8:t=fill[p13];"
 
     # Header + eyebrow
     CHAIN+="[p13]drawbox=x=50:y=234:w=12:h=12:color=${GOLD}:t=fill[p14];"
@@ -537,7 +542,7 @@ prepare_video_content() {
 build_final_filter() {
     local tail="$BASE_CHAIN"
 
-    tail+="[${FACT_END}]drawtext=fontfile=${FONT}:text='${CHANNEL_NAME}':fontcolor=white@0.55:fontsize=22:borderw=2:bordercolor=black@0.7:x=50:y=1020[wm1];"
+    tail+="[${FACT_END}]drawtext=fontfile=${FONT}:text='${CHANNEL_NAME}':fontcolor=white@0.55:fontsize=22:borderw=2:bordercolor=black@0.7:x=1810-text_w:y=1030[wm1];"
 
     local SUB_PULSE_ENABLE="lt(mod(t\,3)\,1)"
     local sub_ring_x=$((SUB_ICON_X - SUB_ICON_R))
