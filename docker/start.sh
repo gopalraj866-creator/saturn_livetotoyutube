@@ -22,10 +22,21 @@ if [ -z "${YOUTUBE_API_KEY:-}" ] || [ -z "${YOUTUBE_CHANNEL_ID:-}" ]; then
     SHOW_STATS=false
 fi
 
+#############################################
+# Output settings: 1080p @ 30 fps
+#############################################
+OUT_W=1920
+OUT_H=1080
+OUT_FPS=30
+VIDEO_BITRATE="6000k"      # YouTube-recommended range for 1080p30 is ~4500-9000k
+VIDEO_BUFSIZE="12000k"     # 2x bitrate
+X264_PRESET="ultrafast"    # lightest preset — 1080p is heavy for a 2-core runner
+
 echo "========================================"
 echo "Starting 24/7 YouTube Stream — Saturn and its Rings"
-echo "Output Resolution : 1280x720 (720p — sized for a 2-core CI runner)"
-echo "FPS               : 30"
+echo "Output Resolution : ${OUT_W}x${OUT_H} (1080p)"
+echo "FPS               : ${OUT_FPS}"
+echo "Video bitrate     : ${VIDEO_BITRATE}"
 echo "========================================"
 
 FONT="font.ttf"
@@ -36,21 +47,22 @@ INFO_FILE="galaxy_info.txt"
 SLOT=6            # seconds each headline is shown
 FACT_SLOT=8       # seconds each fun fact is shown
 CHANNEL_NAME="Technical Talk India"
-# No background panels any more, so text gets a soft outline + shadow
-# to stay readable on top of the video.
-SHADOW="shadowcolor=black@0.8:shadowx=2:shadowy=2:borderw=2:bordercolor=black@0.55"
-HEADLINE_FONTSIZE=21
-HEADLINE_LINE_SPACING=9
+# No background panels, so text gets a soft outline + shadow to stay
+# readable on top of the video (sized for 1080p).
+SHADOW="shadowcolor=black@0.8:shadowx=3:shadowy=3:borderw=3:bordercolor=black@0.55"
+HEADLINE_FONTSIZE=32
+HEADLINE_LINE_SPACING=14
 HEADLINE_LINE_H=$((HEADLINE_FONTSIZE + HEADLINE_LINE_SPACING))
 
 # Don't show "N watching now" until the live viewer count reaches this many.
 VIEWER_MIN_TO_SHOW=10
 
-# Approximate center + radius (1280x720 coordinates) of the subscribe
-# icon baked into overlay.png; a pulsing gold ring is drawn around it.
-SUB_ICON_X=1249
-SUB_ICON_Y=677
-SUB_ICON_R=20
+# Approximate center + radius (in 1920x1080 output coordinates) of the
+# subscribe icon baked into overlay.png; a pulsing gold ring is drawn
+# around it. (overlay.png is scaled to the output size.)
+SUB_ICON_X=1873
+SUB_ICON_Y=1015
+SUB_ICON_R=30
 
 #############################################
 # Up-next bumper (shown between videos)
@@ -80,11 +92,12 @@ mkdir -p "$ASSET_DIR"
 
 #############################################
 # Coordinate-label marker dot (ffmpeg input #2)
+# 30x30: gold center, white ring.
 #############################################
 DOT_MARKER="dot_marker.png"
 GOLD_R=232; GOLD_G=163; GOLD_B=61
-DOT_VF="format=rgba,geq=r=(if(lte(hypot(X-10\,Y-10)\,5)\,${GOLD_R}\,if(lte(hypot(X-10\,Y-10)\,8)\,255\,0))):g=(if(lte(hypot(X-10\,Y-10)\,5)\,${GOLD_G}\,if(lte(hypot(X-10\,Y-10)\,8)\,255\,0))):b=(if(lte(hypot(X-10\,Y-10)\,5)\,${GOLD_B}\,if(lte(hypot(X-10\,Y-10)\,8)\,255\,0))):a=(if(lte(hypot(X-10\,Y-10)\,8)\,255\,0))"
-ffmpeg -y -f lavfi -i "color=c=black@0.0:s=20x20" -vf "$DOT_VF" -frames:v 1 "$DOT_MARKER" -loglevel error
+DOT_VF="format=rgba,geq=r=(if(lte(hypot(X-15\,Y-15)\,8)\,${GOLD_R}\,if(lte(hypot(X-15\,Y-15)\,12)\,255\,0))):g=(if(lte(hypot(X-15\,Y-15)\,8)\,${GOLD_G}\,if(lte(hypot(X-15\,Y-15)\,12)\,255\,0))):b=(if(lte(hypot(X-15\,Y-15)\,8)\,${GOLD_B}\,if(lte(hypot(X-15\,Y-15)\,12)\,255\,0))):a=(if(lte(hypot(X-15\,Y-15)\,12)\,255\,0))"
+ffmpeg -y -f lavfi -i "color=c=black@0.0:s=30x30" -vf "$DOT_VF" -frames:v 1 "$DOT_MARKER" -loglevel error || true
 if [ ! -s "$DOT_MARKER" ]; then
     echo "WARNING: geq-based marker generation failed — using a blank 1x1 fallback."
     echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=" | base64 -d > "$DOT_MARKER"
@@ -231,7 +244,12 @@ DEFAULT_FACTS=(
 #############################################
 # build_labels_chain: optional per-video
 # callout labels from <basename>.labels.txt
-# (format: x,y,Label text — 1280x720 coords).
+# (format: x,y,Label text).
+#
+# NOTE: x,y in the .labels.txt files are still
+# given in 1280x720 coordinates (as before) and
+# are scaled x1.5 here to the 1920x1080 frame,
+# so existing label files keep working.
 #############################################
 build_labels_chain() {
     local url="$1"
@@ -258,7 +276,8 @@ build_labels_chain() {
         [[ "$x" =~ ^[0-9]+$ ]] || continue
         [[ "$y" =~ ^[0-9]+$ ]] || continue
         [ -z "$text" ] && continue
-        xs+=("$x"); ys+=("$y"); texts+=("$text")
+        # 720p -> 1080p
+        xs+=("$((x * 3 / 2))"); ys+=("$((y * 3 / 2))"); texts+=("$text")
     done < "$labels_file"
 
     local n=${#xs[@]}
@@ -268,17 +287,17 @@ build_labels_chain() {
     fi
     echo "Using coordinate labels: $labels_file ($n label(s))"
 
-    local BOX_H=42
-    local V_OFFSET=70
-    local H_OFFSET=40
-    local ACCENT_W=4
-    local BOX_GAP=10
-    local LABEL_FONTSIZE=18
-    local LABEL_PAD_L=14
-    local LABEL_PAD_R=16
-    local AVG_CHAR_W=10
-    local BOX_W_MIN=110
-    local BOX_W_MAX=260
+    local BOX_H=63
+    local V_OFFSET=105
+    local H_OFFSET=60
+    local ACCENT_W=6
+    local BOX_GAP=15
+    local LABEL_FONTSIZE=27
+    local LABEL_PAD_L=21
+    local LABEL_PAD_R=24
+    local AVG_CHAR_W=15
+    local BOX_W_MIN=165
+    local BOX_W_MAX=390
     local placed_x=() placed_y=() placed_w=()
     local k collision tries
 
@@ -297,14 +316,14 @@ build_labels_chain() {
         [ "$box_w" -gt "$BOX_W_MAX" ] && box_w=$BOX_W_MAX
 
         local box_y=$((y - V_OFFSET))
-        if [ "$box_y" -lt 20 ]; then
+        if [ "$box_y" -lt 30 ]; then
             box_y=$((y + V_OFFSET - BOX_H))
         fi
         local box_x=$((x + H_OFFSET))
-        if [ $((box_x + box_w)) -gt 1260 ]; then
+        if [ $((box_x + box_w)) -gt 1890 ]; then
             box_x=$((x - H_OFFSET - box_w))
         fi
-        [ "$box_x" -lt 0 ] && box_x=10
+        [ "$box_x" -lt 0 ] && box_x=15
 
         tries=0
         while :; do
@@ -321,8 +340,8 @@ build_labels_chain() {
             done
             [ "$collision" = false ] && break
             box_y=$((box_y + BOX_H + BOX_GAP))
-            if [ $((box_y + BOX_H)) -gt 700 ]; then
-                box_y=20
+            if [ $((box_y + BOX_H)) -gt 1050 ]; then
+                box_y=30
             fi
             tries=$((tries + 1))
             [ "$tries" -gt 12 ] && break
@@ -338,7 +357,7 @@ build_labels_chain() {
             seg_y_top=$box_y; seg_y_bot=$y
         fi
         local seg_h=$((seg_y_bot - seg_y_top))
-        [ "$seg_h" -lt 2 ] && seg_h=2
+        [ "$seg_h" -lt 3 ] && seg_h=3
 
         local h_left h_w
         if [ "$box_x" -gt "$x" ]; then
@@ -346,17 +365,18 @@ build_labels_chain() {
         else
             h_left=$box_x; h_w=$((x - box_x))
         fi
-        [ "$h_w" -lt 2 ] && h_w=2
+        [ "$h_w" -lt 3 ] && h_w=3
 
         local n1="lbl${idx}_dot" n2="lbl${idx}_v" n3="lbl${idx}_h" n4="lbl${idx}_bg" n5="lbl${idx}_bar" n6="lbl${idx}_outline" n7="lbl${idx}_txt"
 
-        LABELS_CHAIN+="[${prev}]drawbox=x=${x}:y=${seg_y_top}:w=2:h=${seg_h}:color=${GOLD}@0.85:t=fill[${n2}];"
-        LABELS_CHAIN+="[${n2}]drawbox=x=${h_left}:y=${box_y}:w=${h_w}:h=2:color=${GOLD}@0.85:t=fill[${n3}];"
+        LABELS_CHAIN+="[${prev}]drawbox=x=${x}:y=${seg_y_top}:w=3:h=${seg_h}:color=${GOLD}@0.85:t=fill[${n2}];"
+        LABELS_CHAIN+="[${n2}]drawbox=x=${h_left}:y=${box_y}:w=${h_w}:h=3:color=${GOLD}@0.85:t=fill[${n3}];"
         LABELS_CHAIN+="[${n3}]drawbox=x=${box_x}:y=${box_y}:w=${box_w}:h=${BOX_H}:color=black@0.78:t=fill[${n4}];"
         LABELS_CHAIN+="[${n4}]drawbox=x=${box_x}:y=${box_y}:w=${ACCENT_W}:h=${BOX_H}:color=${GOLD}:t=fill[${n5}];"
-        LABELS_CHAIN+="[${n5}]drawbox=x=${box_x}:y=${box_y}:w=${box_w}:h=${BOX_H}:color=${GOLD}@0.5:t=1[${n6}];"
+        LABELS_CHAIN+="[${n5}]drawbox=x=${box_x}:y=${box_y}:w=${box_w}:h=${BOX_H}:color=${GOLD}@0.5:t=2[${n6}];"
         LABELS_CHAIN+="[${n6}]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/label${idx}.txt:fontcolor=white:fontsize=${LABEL_FONTSIZE}:x=$((box_x + ACCENT_W + LABEL_PAD_L)):y=$((box_y + (BOX_H - LABEL_FONTSIZE) / 2)):${SHADOW}[${n7}];"
-        LABELS_CHAIN+="[${n7}][dm${idx}]overlay=x=$((x - 8)):y=$((y - 8))[${n1}];"
+        # 30x30 marker, centered on the point
+        LABELS_CHAIN+="[${n7}][dm${idx}]overlay=x=$((x - 15)):y=$((y - 15))[${n1}];"
 
         prev="$n1"
     done
@@ -440,9 +460,9 @@ prepare_video_content() {
     done
     echo "Longest headline wraps to $MAX_HEADLINE_LINES line(s)."
 
-    HEADLINE_Y=200
-    FACT_LABEL_Y=$((HEADLINE_Y + MAX_HEADLINE_LINES * HEADLINE_LINE_H + 30))
-    FACT_TEXT_Y=$((FACT_LABEL_Y + 22))
+    HEADLINE_Y=300
+    FACT_LABEL_Y=$((HEADLINE_Y + MAX_HEADLINE_LINES * HEADLINE_LINE_H + 45))
+    FACT_TEXT_Y=$((FACT_LABEL_Y + 33))
 
     FACT_N=${#FACTS[@]}
     FACT_CYCLE=$((FACT_N * FACT_SLOT))
@@ -454,31 +474,31 @@ prepare_video_content() {
     #########################################
     # Filter chain: video + overlay + info text
     #########################################
-    CHAIN="[0:v]scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2:black[video];"
-    CHAIN+="[1:v]scale=1280:720:flags=fast_bilinear[ovl];"
+    CHAIN="[0:v]scale=${OUT_W}:${OUT_H}:force_original_aspect_ratio=decrease,pad=${OUT_W}:${OUT_H}:(ow-iw)/2:(oh-ih)/2:black[video];"
+    CHAIN+="[1:v]scale=${OUT_W}:${OUT_H}:flags=fast_bilinear[ovl];"
     CHAIN+="[ovl][video]overlay=0:0[base];"
 
     build_labels_chain "$url"
     CHAIN+="$LABELS_CHAIN"
 
     # LIVE badge
-    CHAIN+="${LABELS_OUT}drawbox=x=27:y=28:w=11:h=11:color=${RED}:t=fill:enable='lt(mod(t\,1)\,0.6)'[p7];"
-    CHAIN+="[p7]drawtext=fontfile=${FONT}:text='LIVE':fontcolor=white:fontsize=30:x=44:y=19:${SHADOW}[p8];"
+    CHAIN+="${LABELS_OUT}drawbox=x=40:y=42:w=17:h=17:color=${RED}:t=fill:enable='lt(mod(t\,1)\,0.6)'[p7];"
+    CHAIN+="[p7]drawtext=fontfile=${FONT}:text='LIVE':fontcolor=white:fontsize=45:x=66:y=28:${SHADOW}[p8];"
 
     # Credits / clock / stats (plain text, no panel)
-    CHAIN+="[p8]drawtext=fontfile=${FONT}:text='Credits\: NASA':fontcolor=white@0.9:fontsize=15:x=313-text_w:y=19:${SHADOW}[p9];"
-    CHAIN+="[p9]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/clock.txt:reload=1:fontcolor=${GOLD}:fontsize=14:x=313-text_w:y=39:${SHADOW}[p10];"
-    CHAIN+="[p10]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/subs.txt:reload=1:fontcolor=white@0.85:fontsize=13:x=313-text_w:y=57:${SHADOW}[p10b];"
-    CHAIN+="[p10b]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/viewers.txt:reload=1:fontcolor=white@0.85:fontsize=13:x=313-text_w:y=75:${SHADOW}[p10c];"
+    CHAIN+="[p8]drawtext=fontfile=${FONT}:text='Credits\: NASA':fontcolor=white@0.9:fontsize=22:x=470-text_w:y=28:${SHADOW}[p9];"
+    CHAIN+="[p9]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/clock.txt:reload=1:fontcolor=${GOLD}:fontsize=21:x=470-text_w:y=58:${SHADOW}[p10];"
+    CHAIN+="[p10]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/subs.txt:reload=1:fontcolor=white@0.85:fontsize=19:x=470-text_w:y=86:${SHADOW}[p10b];"
+    CHAIN+="[p10b]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/viewers.txt:reload=1:fontcolor=white@0.85:fontsize=19:x=470-text_w:y=112:${SHADOW}[p10c];"
 
     # Title
-    CHAIN+="[p10c]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/title1.txt:fontcolor=white:fontsize=26:x=33:y=100:${SHADOW}[p11];"
-    CHAIN+="[p11]drawbox=x=33:y=140:w=280:h=2:color=${GOLD}@0.8:t=fill[p13];"
+    CHAIN+="[p10c]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/title1.txt:fontcolor=white:fontsize=39:x=50:y=150:${SHADOW}[p11];"
+    CHAIN+="[p11]drawbox=x=50:y=210:w=420:h=3:color=${GOLD}@0.8:t=fill[p13];"
 
     # Header + eyebrow
-    CHAIN+="[p13]drawbox=x=33:y=156:w=8:h=8:color=${GOLD}:t=fill[p14];"
-    CHAIN+="[p14]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/header.txt:fontcolor=${GOLD}:fontsize=15:x=49:y=153:${SHADOW}[p15];"
-    CHAIN+="[p15]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/eyebrow.txt:fontcolor=${GOLD}@0.9:fontsize=12:x=33:y=180:${SHADOW}[p16];"
+    CHAIN+="[p13]drawbox=x=50:y=234:w=12:h=12:color=${GOLD}:t=fill[p14];"
+    CHAIN+="[p14]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/header.txt:fontcolor=${GOLD}:fontsize=22:x=74:y=230:${SHADOW}[p15];"
+    CHAIN+="[p15]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/eyebrow.txt:fontcolor=${GOLD}@0.9:fontsize=18:x=50:y=270:${SHADOW}[p16];"
 
     # Rotating headlines
     local prev="p16"
@@ -488,12 +508,12 @@ prepare_video_content() {
         local end=$((start + SLOT))
         local nxt="h${idx}"
         local ALPHA="if(between(mod(t\,${CYCLE})\,${start}\,${end})\,if(lt(mod(t\,${CYCLE})-${start}\,0.6)\,(mod(t\,${CYCLE})-${start})/0.6\,if(gt(mod(t\,${CYCLE})-${start}\,${SLOT}-0.6)\,(${end}-mod(t\,${CYCLE}))/0.6\,1))\,0)"
-        CHAIN+="[${prev}]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/headline${idx}.txt:fontcolor=white:fontsize=${HEADLINE_FONTSIZE}:line_spacing=${HEADLINE_LINE_SPACING}:x=33:y=${HEADLINE_Y}:alpha='${ALPHA}':${SHADOW}[${nxt}];"
+        CHAIN+="[${prev}]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/headline${idx}.txt:fontcolor=white:fontsize=${HEADLINE_FONTSIZE}:line_spacing=${HEADLINE_LINE_SPACING}:x=50:y=${HEADLINE_Y}:alpha='${ALPHA}':${SHADOW}[${nxt}];"
         prev="$nxt"
     done
 
     # Rotating "Did you know" facts
-    CHAIN+="[${prev}]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/fact_label.txt:fontcolor=${GOLD}@0.9:fontsize=12:x=33:y=${FACT_LABEL_Y}:${SHADOW}[fp2];"
+    CHAIN+="[${prev}]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/fact_label.txt:fontcolor=${GOLD}@0.9:fontsize=18:x=50:y=${FACT_LABEL_Y}:${SHADOW}[fp2];"
     prev="fp2"
     for i in "${!FACTS[@]}"; do
         idx=$((i + 1))
@@ -501,7 +521,7 @@ prepare_video_content() {
         local end=$((start + FACT_SLOT))
         local nxt="f${idx}"
         local FALPHA="if(between(mod(t\,${FACT_CYCLE})\,${start}\,${end})\,if(lt(mod(t\,${FACT_CYCLE})-${start}\,0.6)\,(mod(t\,${FACT_CYCLE})-${start})/0.6\,if(gt(mod(t\,${FACT_CYCLE})-${start}\,${FACT_SLOT}-0.6)\,(${end}-mod(t\,${FACT_CYCLE}))/0.6\,1))\,0)"
-        CHAIN+="[${prev}]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/fact${idx}.txt:fontcolor=white@0.95:fontsize=16:line_spacing=7:x=33:y=${FACT_TEXT_Y}:alpha='${FALPHA}':${SHADOW}[${nxt}];"
+        CHAIN+="[${prev}]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/fact${idx}.txt:fontcolor=white@0.95:fontsize=24:line_spacing=10:x=50:y=${FACT_TEXT_Y}:alpha='${FALPHA}':${SHADOW}[${nxt}];"
         prev="$nxt"
     done
 
@@ -517,13 +537,13 @@ prepare_video_content() {
 build_final_filter() {
     local tail="$BASE_CHAIN"
 
-    tail+="[${FACT_END}]drawtext=fontfile=${FONT}:text='${CHANNEL_NAME}':fontcolor=white@0.55:fontsize=15:borderw=1.5:bordercolor=black@0.7:x=33:y=680[wm1];"
+    tail+="[${FACT_END}]drawtext=fontfile=${FONT}:text='${CHANNEL_NAME}':fontcolor=white@0.55:fontsize=22:borderw=2:bordercolor=black@0.7:x=50:y=1020[wm1];"
 
     local SUB_PULSE_ENABLE="lt(mod(t\,3)\,1)"
     local sub_ring_x=$((SUB_ICON_X - SUB_ICON_R))
     local sub_ring_y=$((SUB_ICON_Y - SUB_ICON_R))
     local sub_ring_d=$((SUB_ICON_R * 2))
-    tail+="[wm1]drawbox=x=${sub_ring_x}:y=${sub_ring_y}:w=${sub_ring_d}:h=${sub_ring_d}:color=${GOLD}@0.9:t=3:enable='${SUB_PULSE_ENABLE}'[final]"
+    tail+="[wm1]drawbox=x=${sub_ring_x}:y=${sub_ring_y}:w=${sub_ring_d}:h=${sub_ring_d}:color=${GOLD}@0.9:t=4:enable='${SUB_PULSE_ENABLE}'[final]"
 
     echo "$tail"
 }
@@ -558,15 +578,15 @@ run_bumper() {
     fade_out_start=$(awk -v d="$BUMPER_DURATION" 'BEGIN{print d - 0.6}')
 
     local BFILTER
-    BFILTER="[0:v]scale=1280:720:force_original_aspect_ratio=increase,crop=1280:720[bg];"
-    BFILTER+="[bg]drawbox=x=0:y=0:w=1280:h=720:color=black@0.55:t=fill[b1];"
-    BFILTER+="[b1]drawbox=x=27:y=28:w=11:h=11:color=${RED}:t=fill:enable='lt(mod(t\,1)\,0.6)'[b2];"
-    BFILTER+="[b2]drawtext=fontfile=${FONT}:text='LIVE':fontcolor=white:fontsize=30:x=44:y=19[b3];"
-    BFILTER+="[b3]drawbox=x=0:y=313:w=1280:h=2:color=${GOLD}@0.8:t=fill[b4];"
-    BFILTER+="[b4]drawtext=fontfile=${FONT}:text='UP NEXT':fontcolor=${GOLD}:fontsize=22:x=(w-text_w)/2:y=260[b5];"
-    BFILTER+="[b5]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/bumper_title.txt:fontcolor=white:fontsize=36:line_spacing=8:x=(w-text_w)/2:y=347:${SHADOW}[b6];"
-    BFILTER+="[b6]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/bumper_sub.txt:fontcolor=white@0.75:fontsize=18:x=(w-text_w)/2:y=427[b7];"
-    BFILTER+="[b7]drawtext=fontfile=${FONT}:text='${CHANNEL_NAME}':fontcolor=white@0.4:fontsize=14:x=(w-text_w)/2:y=470[b8];"
+    BFILTER="[0:v]scale=${OUT_W}:${OUT_H}:force_original_aspect_ratio=increase,crop=${OUT_W}:${OUT_H}[bg];"
+    BFILTER+="[bg]drawbox=x=0:y=0:w=${OUT_W}:h=${OUT_H}:color=black@0.55:t=fill[b1];"
+    BFILTER+="[b1]drawbox=x=40:y=42:w=17:h=17:color=${RED}:t=fill:enable='lt(mod(t\,1)\,0.6)'[b2];"
+    BFILTER+="[b2]drawtext=fontfile=${FONT}:text='LIVE':fontcolor=white:fontsize=45:x=66:y=28[b3];"
+    BFILTER+="[b3]drawbox=x=0:y=470:w=${OUT_W}:h=3:color=${GOLD}@0.8:t=fill[b4];"
+    BFILTER+="[b4]drawtext=fontfile=${FONT}:text='UP NEXT':fontcolor=${GOLD}:fontsize=33:x=(w-text_w)/2:y=390[b5];"
+    BFILTER+="[b5]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/bumper_title.txt:fontcolor=white:fontsize=54:line_spacing=12:x=(w-text_w)/2:y=520:${SHADOW}[b6];"
+    BFILTER+="[b6]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/bumper_sub.txt:fontcolor=white@0.75:fontsize=27:x=(w-text_w)/2:y=640[b7];"
+    BFILTER+="[b7]drawtext=fontfile=${FONT}:text='${CHANNEL_NAME}':fontcolor=white@0.4:fontsize=21:x=(w-text_w)/2:y=705[b8];"
     BFILTER+="[b8]fade=t=in:st=0:d=0.5,fade=t=out:st=${fade_out_start}:d=0.6[final]"
 
     ffmpeg \
@@ -577,20 +597,20 @@ run_bumper() {
     -filter_complex "$BFILTER" \
     -map "[final]" \
     -map 1:a \
-    -r 24 \
-    -s 1280x720 \
+    -r "$OUT_FPS" \
+    -s "${OUT_W}x${OUT_H}" \
     -c:v libx264 \
-    -preset ultrafast \
+    -preset "$X264_PRESET" \
     -tune zerolatency \
     -threads 2 \
     -profile:v high \
     -level 4.1 \
     -pix_fmt yuv420p \
-    -b:v 3000k \
-    -maxrate 3000k \
-    -bufsize 6000k \
-    -g 60 \
-    -keyint_min 60 \
+    -b:v "$VIDEO_BITRATE" \
+    -maxrate "$VIDEO_BITRATE" \
+    -bufsize "$VIDEO_BUFSIZE" \
+    -g $((OUT_FPS * 2)) \
+    -keyint_min $((OUT_FPS * 2)) \
     -sc_threshold 0 \
     -c:a aac \
     -b:a 128k \
@@ -614,7 +634,7 @@ run_video() {
 
     while [ "$attempt" -le "$MAX_RETRIES" ]; do
         echo "----------------------------------------"
-        echo "Streaming (attempt ${attempt}/${MAX_RETRIES}):"
+        echo "Streaming (attempt ${attempt}/${MAX_RETRIES}) @ ${OUT_W}x${OUT_H} ${OUT_FPS}fps:"
         echo "$url"
         echo "----------------------------------------"
 
@@ -632,20 +652,20 @@ run_video() {
         -filter_complex "$filter" \
         -map "[final]" \
         -map 0:a? \
-        -r 30 \
-        -s 1280x720 \
+        -r "$OUT_FPS" \
+        -s "${OUT_W}x${OUT_H}" \
         -c:v libx264 \
-        -preset ultrafast \
+        -preset "$X264_PRESET" \
         -tune zerolatency \
         -threads 2 \
         -profile:v high \
         -level 4.1 \
         -pix_fmt yuv420p \
-        -b:v 3000k \
-        -maxrate 3000k \
-        -bufsize 6000k \
-        -g 60 \
-        -keyint_min 60 \
+        -b:v "$VIDEO_BITRATE" \
+        -maxrate "$VIDEO_BITRATE" \
+        -bufsize "$VIDEO_BUFSIZE" \
+        -g $((OUT_FPS * 2)) \
+        -keyint_min $((OUT_FPS * 2)) \
         -sc_threshold 0 \
         -c:a aac \
         -b:a 128k \
