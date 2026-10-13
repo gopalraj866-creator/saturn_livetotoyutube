@@ -33,7 +33,7 @@ VIDEO_BUFSIZE="12000k"     # 2x bitrate
 X264_PRESET="ultrafast"    # lightest preset — 1080p is heavy for a 2-core runner
 
 echo "========================================"
-echo "Starting 24/7 YouTube Stream — Saturn and its Rings"
+echo "Starting 24/7 YouTube Stream — Black Holes"
 echo "Output Resolution : ${OUT_W}x${OUT_H} (1080p)"
 echo "FPS               : ${OUT_FPS}"
 echo "Video bitrate     : ${VIDEO_BITRATE}"
@@ -41,7 +41,6 @@ echo "========================================"
 
 FONT="font.ttf"
 GOLD="0xE8A33D"
-RED="0xE8453C"
 ASSET_DIR="panel_assets"
 INFO_FILE="galaxy_info.txt"
 SLOT=6            # seconds each headline is shown
@@ -63,24 +62,6 @@ VIEWER_MIN_TO_SHOW=10
 SUB_ICON_X=1873
 SUB_ICON_Y=1015
 SUB_ICON_R=30
-
-#############################################
-# Up-next bumper (shown between videos)
-#############################################
-ENABLE_BUMPER=true
-BUMPER_DURATION=5   # seconds
-BUMPER_MESSAGES=(
-    "Stay tuned as we keep tracking Saturn, its rings and its moons."
-    "Saturn's orbit takes about 29.5 years. Stay with us for the next view."
-    "Follow the ringed planet as it travels along its orbital path."
-    "From Titan to Enceladus, Saturn's moons are coming up next."
-    "The rings of Saturn are still telling their story. Stay with us."
-    "See Saturn and its rings in extraordinary detail."
-    "Every observation reveals another secret of Saturn's rings."
-    "Look closer at the ringed planet and its many moons."
-    "Over 270 moons, countless icy ring particles, and one giant planet."
-    "The next chapter of our journey around Saturn begins shortly."
-)
 
 #############################################
 # Auto-restart on failure
@@ -181,67 +162,66 @@ trap 'kill "$CLOCK_PID" 2>/dev/null || true; [ -n "$SUBS_PID" ] && kill "$SUBS_P
 #############################################
 # Static text
 #############################################
-printf 'SATURN AND ITS RINGS — LIVE'     > "$ASSET_DIR/title1.txt"
-printf 'P L A N E T   T R A C K E R'        > "$ASSET_DIR/header.txt"
-printf 'PLANET · RINGS · ORBIT · MOONS'    > "$ASSET_DIR/eyebrow.txt"
-printf 'DID YOU KNOW'                     > "$ASSET_DIR/fact_label.txt"
+printf 'BLACK HOLES — LIVE'                  > "$ASSET_DIR/title1.txt"
+printf 'B L A C K   H O L E   T R A C K E R' > "$ASSET_DIR/header.txt"
+printf 'EVENT HORIZON · SINGULARITY · ACCRETION · GRAVITY' > "$ASSET_DIR/eyebrow.txt"
+printf 'DID YOU KNOW'                        > "$ASSET_DIR/fact_label.txt"
 
 #############################################
 # Default headline / fact pools (used if
 # galaxy_info.txt / facts.txt are missing)
 #############################################
 DEFAULT_HEADLINES=(
-    "Tracking Saturn live: the planet, its rings, its orbital path and its moons."
-    "Saturn takes about 29.5 Earth years to complete one orbit around the Sun."
-    "Saturn orbits the Sun at an average distance of about 1.4 billion kilometers."
-    "The ring system reaches up to 282,000 kilometers from Saturn, yet the main rings are often only about 10 meters thick."
-    "The rings are labeled with letters, from innermost to outermost: D, C, B, A, F, G and E."
-    "The Cassini Division, a gap about 4,800 kilometers wide, separates Saturn's A and B rings."
-    "Saturn has more than 270 confirmed moons, the most of any planet in the Solar System."
-    "Titan, Saturn's largest moon, is bigger than Mercury and has a thick nitrogen atmosphere."
-    "Enceladus sprays water-ice plumes from its south pole, feeding Saturn's faint E ring."
-    "Saturn's axis is tilted about 27 degrees, which is why its rings seem to open and close over the years."
-    "Saturn rotates once in about 10.5 hours, flattening the planet at its poles."
-    "Saturn is a gas giant made mostly of hydrogen and helium, with no solid surface."
-    "Rhea is Saturn's second-largest moon, followed by Iapetus, Dione and Tethys."
-    "The Cassini spacecraft explored Saturn from 2004 to 2017, ending with a final plunge into the planet."
-    "Saturn reached opposition in early October 2026, when it is closest to Earth and brightest for the year."
+    "Exploring black holes live: event horizons, accretion disks, jets and gravitational waves."
+    "A black hole is a region of space where gravity is so strong that nothing, not even light, can escape."
+    "The event horizon is the point of no return around a black hole."
+    "Stellar-mass black holes form when massive stars collapse at the end of their lives."
+    "Supermassive black holes, millions to billions of times the Sun's mass, sit at the centers of most large galaxies."
+    "Sagittarius A*, at the heart of our Milky Way, holds about 4 million times the mass of the Sun."
+    "In 2019, the Event Horizon Telescope captured the first image of a black hole's shadow, in galaxy M87."
+    "In 2022, astronomers revealed the first image of Sagittarius A*, the black hole at the center of our galaxy."
+    "Matter spiraling into a black hole forms a superheated accretion disk that glows brightly in X-rays."
+    "Some black holes launch jets of plasma at nearly the speed of light, stretching for thousands of light-years."
+    "In 2015, LIGO made the first direct detection of gravitational waves, from two merging black holes."
+    "Time runs slower near a black hole: the stronger the gravity, the slower the clock."
+    "Hawking radiation predicts that black holes slowly lose energy and can eventually evaporate."
+    "At the singularity, our current laws of physics break down."
+    "Black holes do not roam space sucking everything in. Far away, their gravity acts like any object of the same mass."
 )
 
 DEFAULT_FACTS=(
-    "Saturn is the second-largest planet in the Solar System, after Jupiter."
-    "Saturn's equatorial diameter is about 120,500 kilometers, roughly 9.4 times Earth's."
-    "Saturn is the least dense planet in the Solar System — less dense than water."
-    "One year on Saturn lasts about 29.5 Earth years."
-    "A day on Saturn lasts only about 10.5 hours."
-    "Saturn's average distance from the Sun is about 9.5 AU, or roughly 1.4 billion kilometers."
-    "Saturn travels around the Sun at an average speed of about 9.7 kilometers per second."
-    "Saturn's axis is tilted about 26.7 degrees, close to Earth's 23.4 degrees."
-    "Saturn's rings are mostly water ice, from tiny grains to chunks as big as houses."
-    "The Cassini Division is a gap about 4,800 kilometers wide between the A and B rings."
-    "The B ring is the brightest and most massive of Saturn's main rings."
-    "The tiny moon Pan keeps the Encke Gap in Saturn's A ring clear."
-    "The shepherd moons Prometheus and Pandora help shape Saturn's narrow F ring."
-    "Saturn has more than 270 confirmed moons, more than any other planet."
-    "Titan is Saturn's largest moon and the second-largest moon in the Solar System."
-    "Titan is the only moon with a thick atmosphere, and it has lakes of liquid methane and ethane."
-    "Enceladus has a global ocean of liquid water beneath its icy crust."
-    "Mimas is marked by the giant Herschel crater, about one third of the moon's width."
-    "Iapetus has one bright hemisphere and one dark hemisphere."
-    "Rhea is Saturn's second-largest moon, about 1,527 kilometers across."
-    "Mimas orbits Saturn in about 22.6 hours, the fastest of the major moons."
-    "Enceladus orbits Saturn in about 1.4 days."
-    "Titan orbits Saturn in about 16 days."
-    "Iapetus takes about 79 days to orbit Saturn."
-    "Saturn's major moons orbit close to the plane of its rings."
-    "A six-sided jet stream circles Saturn's north pole and is about 30,000 kilometers wide."
-    "Winds near Saturn's equator reach about 1,800 kilometers per hour."
-    "Saturn radiates more energy than it receives from the Sun."
-    "The Cassini spacecraft orbited Saturn from 2004 to 2017."
-    "The Huygens probe landed on Titan in January 2005."
-    "Galileo first saw Saturn's rings in 1610, and Christiaan Huygens explained them in 1655."
-    "Seen edge-on from Earth, Saturn's rings nearly vanish about every 13 to 15 years."
-    "Saturn is visible to the naked eye, and even a small telescope shows its rings."
+    "A black hole's gravity is so strong that its escape velocity at the event horizon equals the speed of light."
+    "The event horizon is the boundary beyond which nothing can return, not even light."
+    "The Schwarzschild radius of the Sun would be only about 3 kilometers."
+    "If Earth were squeezed into a black hole, it would be only about 9 millimeters across."
+    "Karl Schwarzschild found the first exact black hole solution to Einstein's equations in 1916."
+    "The term \"black hole\" was popularized by physicist John Wheeler in 1967."
+    "Stellar-mass black holes typically weigh from a few to a few dozen times the mass of the Sun."
+    "Supermassive black holes can weigh millions to billions of solar masses."
+    "Sagittarius A* is about 26,000 light-years from Earth."
+    "Sagittarius A* has about 4 million times the mass of the Sun."
+    "M87* is about 55 million light-years away and holds roughly 6.5 billion solar masses."
+    "The Event Horizon Telescope links radio dishes around the world into one Earth-sized telescope."
+    "The 2020 Nobel Prize in Physics honored Roger Penrose, Reinhard Genzel and Andrea Ghez for black hole research."
+    "Gaia BH1, about 1,560 light-years away, is one of the closest known black holes to Earth."
+    "The Milky Way may contain tens of millions of stellar-mass black holes."
+    "Cygnus X-1, discovered as an X-ray source, was one of the first strong black hole candidates."
+    "Gas in an accretion disk can heat up to millions of degrees before falling in."
+    "Quasars are the blazing cores of distant galaxies powered by feeding supermassive black holes."
+    "Black hole jets can stretch far beyond their host galaxy."
+    "Near a black hole, tidal forces can stretch objects, an effect called spaghettification."
+    "Light can orbit a black hole at the photon sphere, about 1.5 times the horizon radius for a non-spinning one."
+    "Spinning black holes drag space itself around with them, an effect called frame dragging."
+    "The first gravitational waves seen, GW150914, came from two black holes merging about 1.3 billion light-years away."
+    "LIGO, Virgo and KAGRA keep detecting black hole mergers through ripples in spacetime."
+    "Stephen Hawking showed in 1974 that black holes should emit faint thermal radiation."
+    "A black hole with the mass of the Sun would have a Hawking temperature far colder than the cosmic microwave background."
+    "If the Sun became a black hole of the same mass, Earth would keep orbiting it as before."
+    "Inside the event horizon, all paths lead toward the singularity."
+    "A black hole's shadow appears about 2.5 times larger than its event horizon."
+    "Intermediate-mass black holes, between stellar and supermassive, are rarer and harder to find."
+    "Astronomers track stars orbiting Sagittarius A* to weigh the black hole at our galaxy's center."
+    "Some black holes spin at a large fraction of the speed of light at their horizons."
 )
 
 #############################################
@@ -484,11 +464,12 @@ prepare_video_content() {
     build_labels_chain "$url"
     CHAIN+="$LABELS_CHAIN"
 
-    # Layout note: the Saturn video already has its own "SATURN / THE RINGED
-    # PLANET" title (top-left, down to y~110), a LIVE badge (top-right, down to
-    # y~65) and a credit line (bottom-left, y~1045). So there is no LIVE badge
-    # here, the info block starts below y=120, the credits/clock/stats sit
-    # top-right under the video's LIVE badge, and the watermark is bottom-right.
+    # Layout note: the video is assumed to have its own title (top-left, down
+    # to y~110), a LIVE badge (top-right, down to y~65) and a credit line
+    # (bottom-left, y~1045). So there is no LIVE badge here, the info block
+    # starts below y=120, the credits/clock/stats sit top-right under the
+    # video's LIVE badge, and the watermark is bottom-right.
+    # Adjust the y values below if your black hole video has a different layout.
 
     # Credits / clock / stats (right-aligned, top-right, below the video's own LIVE badge)
     CHAIN+="${LABELS_OUT}drawtext=fontfile=${FONT}:text='Credit\: Video designed by Technical Talk India':fontcolor=white@0.9:fontsize=22:x=1870-text_w:y=90:${SHADOW}[p9];"
@@ -551,78 +532,6 @@ build_final_filter() {
     tail+="[wm1]drawbox=x=${sub_ring_x}:y=${sub_ring_y}:w=${sub_ring_d}:h=${sub_ring_d}:color=${GOLD}@0.9:t=4:enable='${SUB_PULSE_ENABLE}'[final]"
 
     echo "$tail"
-}
-
-#############################################
-# Up-next bumper
-#############################################
-run_bumper() {
-    local next_url="$1"
-
-    local raw title
-    raw="${next_url##*/}"
-    raw="${raw%.*}"
-    raw="${raw//[-_]/ }"
-    raw="$(echo "$raw" | tr -d '[:space:]')"
-    if [ -z "$raw" ] || [ ${#raw} -lt 3 ]; then
-        title="A New Discovery"
-    else
-        raw="${next_url##*/}"
-        raw="${raw%.*}"
-        raw="${raw//[-_]/ }"
-        title=$(echo "$raw" | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2); print}')
-    fi
-
-    local sub_idx=$((RANDOM % ${#BUMPER_MESSAGES[@]}))
-    printf '%s' "$title" | fold -s -w 34 > "$ASSET_DIR/bumper_title.txt"
-    printf '%s' "${BUMPER_MESSAGES[$sub_idx]}" > "$ASSET_DIR/bumper_sub.txt"
-
-    echo ">>> Up next: $title"
-
-    local fade_out_start
-    fade_out_start=$(awk -v d="$BUMPER_DURATION" 'BEGIN{print d - 0.6}')
-
-    local BFILTER
-    BFILTER="[0:v]scale=${OUT_W}:${OUT_H}:force_original_aspect_ratio=increase,crop=${OUT_W}:${OUT_H}[bg];"
-    BFILTER+="[bg]drawbox=x=0:y=0:w=${OUT_W}:h=${OUT_H}:color=black@0.55:t=fill[b1];"
-    BFILTER+="[b1]drawbox=x=40:y=42:w=17:h=17:color=${RED}:t=fill:enable='lt(mod(t\,1)\,0.6)'[b2];"
-    BFILTER+="[b2]drawtext=fontfile=${FONT}:text='LIVE':fontcolor=white:fontsize=45:x=66:y=28[b3];"
-    BFILTER+="[b3]drawbox=x=0:y=470:w=${OUT_W}:h=3:color=${GOLD}@0.8:t=fill[b4];"
-    BFILTER+="[b4]drawtext=fontfile=${FONT}:text='UP NEXT':fontcolor=${GOLD}:fontsize=33:x=(w-text_w)/2:y=390[b5];"
-    BFILTER+="[b5]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/bumper_title.txt:fontcolor=white:fontsize=54:line_spacing=12:x=(w-text_w)/2:y=520:${SHADOW}[b6];"
-    BFILTER+="[b6]drawtext=fontfile=${FONT}:textfile=${ASSET_DIR}/bumper_sub.txt:fontcolor=white@0.75:fontsize=27:x=(w-text_w)/2:y=640[b7];"
-    BFILTER+="[b7]drawtext=fontfile=${FONT}:text='${CHANNEL_NAME}':fontcolor=white@0.4:fontsize=21:x=(w-text_w)/2:y=705[b8];"
-    BFILTER+="[b8]fade=t=in:st=0:d=0.5,fade=t=out:st=${fade_out_start}:d=0.6[final]"
-
-    ffmpeg \
-    -hide_banner \
-    -loglevel warning \
-    -loop 1 -t "$BUMPER_DURATION" -i overlay.png \
-    -f lavfi -t "$BUMPER_DURATION" -i anullsrc=r=48000:cl=stereo \
-    -filter_complex "$BFILTER" \
-    -map "[final]" \
-    -map 1:a \
-    -r "$OUT_FPS" \
-    -s "${OUT_W}x${OUT_H}" \
-    -c:v libx264 \
-    -preset "$X264_PRESET" \
-    -tune zerolatency \
-    -threads 2 \
-    -profile:v high \
-    -level 4.1 \
-    -pix_fmt yuv420p \
-    -b:v "$VIDEO_BITRATE" \
-    -maxrate "$VIDEO_BITRATE" \
-    -bufsize "$VIDEO_BUFSIZE" \
-    -g $((OUT_FPS * 2)) \
-    -keyint_min $((OUT_FPS * 2)) \
-    -sc_threshold 0 \
-    -c:a aac \
-    -b:a 128k \
-    -ar 48000 \
-    -ac 2 \
-    -f flv \
-    "rtmp://a.rtmp.youtube.com/live2/${YOUTUBE_STREAM_KEY}" || echo "WARNING: bumper failed, continuing to next video"
 }
 
 #############################################
@@ -724,18 +633,8 @@ if [ "$NUM_URLS" -gt 1 ]; then
 fi
 
 while true; do
-    for ((i = 0; i < NUM_URLS; i++)); do
-        url="${URLS[$i]}"
-        next_idx=$(( (i + 1) % NUM_URLS ))
-        next_url="${URLS[$next_idx]}"
-
-        run_video "$url"
-
-        if [ "$ENABLE_BUMPER" = true ]; then
-            run_bumper "$next_url"
-        fi
-
-        echo "Loading next video..."
+    for url in "${URLS[@]}"; do
+        run_video "$url" || true
         echo ""
     done
 done
