@@ -49,15 +49,15 @@ jobs:
         if: env.BUILD == 'true'
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push fresh image (manual runs only)
+      - name: Build and push fresh image from scratch (manual runs only)
         if: env.BUILD == 'true'
         uses: docker/build-push-action@v6
         with:
           context: ./docker
           push: true
+          no-cache: true     # ignore every cached layer
+          pull: true         # always re-pull the base image
           tags: ${{ env.IMAGE }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Pull cached image (auto-restart / scheduled runs)
         if: env.BUILD != 'true'
